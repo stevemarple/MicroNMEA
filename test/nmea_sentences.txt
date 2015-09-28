@@ -14,3 +14,8 @@ $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*4C
 $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*XX
 # Try sentence with higher than normal temporal resolution
 $GPRMC,111309.0033,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*4C
+# Try sentences with higher than normal latitude/longitude resolution
+$GPRMC,111309.00,A,5400.600088,N,00247.100099,W,00.00,302.5,140915,,,A*4C
+$GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
+# Sentence with higher than normal altitude resolution
+$GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.289,M,49.1,M,,*4B

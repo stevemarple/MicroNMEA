@@ -23,6 +23,11 @@ test_MicroNMEA.o : test_MicroNMEA.cpp MicroNMEA.h
 test_MicroNMEA : test_MicroNMEA.o MicroNMEA.o
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
+.PHONY : run
+run : test_MicroNMEA 
+	./test_MicroNMEA < nmea_sentences.txt
+
+
 # Regression testing. Run as "make regressiontest", should display
 # "TEST PASSED" if everything ok.
 .PHONY : regressiontest
