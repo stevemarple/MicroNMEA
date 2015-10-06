@@ -5,14 +5,14 @@ CXXFLAGS += -ggdb -Wall -I.
 default: test_MicroNMEA
 
 .PHONY : MicroNMEA.h
-MicroNMEA.h : ../MicroNMEA.h
+MicroNMEA.h : ../../src/MicroNMEA.h
 	echo '' > $@
 	echo '#include "arduino_compat.h"' >> $@
 	echo '#include <iostream>' >> $@
 	echo 'using namespace ::std;' >> $@
 	cat $< >> $@
 
-MicroNMEA.cpp : ../MicroNMEA.cpp
+MicroNMEA.cpp : ../../src/MicroNMEA.cpp
 	cp $< $@
 
 MicroNMEA.o : MicroNMEA.cpp MicroNMEA.h
