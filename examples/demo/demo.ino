@@ -66,7 +66,7 @@ void setup(void)
   MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1");
   // MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1,GSV,1");
 
-#ifdef CALUNIUM
+#ifdef ARDUINO_AVR_CALUNIUM
   pinMode(6, INPUT);
   attachInterrupt(2, ppsHandler, RISING);
 #else
