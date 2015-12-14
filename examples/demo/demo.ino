@@ -1,11 +1,11 @@
 #include <MicroNMEA.h>
 #include <MemoryFree.h>
 
-// Refer to streams logically
-Stream& console = Serial;
-Stream& gps = Serial1;
+// Refer to serial devices by use
+HardwareSerial& console = Serial;
+HardwareSerial& gps = Serial1;
 
-char nmeaBuffer[85];
+char nmeaBuffer[100];
 MicroNMEA nmea(nmeaBuffer, sizeof(nmeaBuffer));
 bool ledState = LOW;
 volatile bool ppsTriggered = false;
@@ -18,6 +18,12 @@ void ppsHandler(void)
   ppsTriggered = true;
 }
 
+void printUnknownSentence(MicroNMEA& nmea)
+{
+  console.println();
+  console.print("Unknown sentence: ");
+  console.println(nmea.getSentence());
+}
 
 void gpsHardwareReset()
 {
@@ -32,40 +38,41 @@ void gpsHardwareReset()
   // Reset is complete when the first valid message is received
   while (1) {
     while (gps.available()) {
-      char c = gps.read();    
+      char c = gps.read();
       if (nmea.process(c))
 	return;
+      
     }
   }
 }
 
 void setup(void)
 {
-  //Serial.begin(9600); // console
-  Serial.begin(115200); // console
-  Serial1.begin(9600); // gps
-  // Serial1.begin(19200); // gps
+  console.begin(115200); // console
+  gps.begin(115200); // gps
   
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, ledState);
 
+  nmea.setUnknownSentenceHandler(printUnknownSentence);
+  
   pinMode(A0, OUTPUT);
   digitalWrite(A0, HIGH);
   console.println("Resetting GPS module ...");
   gpsHardwareReset();
   console.println("... done");
-  
-  // Compatibility mode off
-  // MicroNMEA::sendSentence(gps, "$PONME,2,6,1,0");
-  MicroNMEA::sendSentence(gps, "$PONME,,,1,0");
 
-   // Clear the list of messages which are sent.
+  // Clear the list of messages which are sent.
   MicroNMEA::sendSentence(gps, "$PORZB");
 
-  // Send RMC and GGA messages.
+  // Send only RMC and GGA messages.
   MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1");
-  // MicroNMEA::sendSentence(gps, "$PORZB,RMC,1,GGA,1,GSV,1");
 
+  // Disable compatability mode (NV08C-CSM proprietary message) and
+  // adjust precision of time and position fields
+  MicroNMEA::sendSentence(gps, "$PNVGNME,2,9,1");
+  // MicroNMEA::sendSentence(gps, "$PONME,2,4,1,0");
+  
 #ifdef ARDUINO_AVR_CALUNIUM
   pinMode(6, INPUT);
   attachInterrupt(2, ppsHandler, RISING);
@@ -82,8 +89,6 @@ void loop(void)
     ledState = !ledState;
     digitalWrite(LED_BUILTIN, ledState);
 
-    // MicroNMEA::sendSentence(gps, "$PONME,2,6,1,0");
-    
     // Output GPS information from previous second
     console.print("Valid fix: ");
     console.println(nmea.isValid() ? "yes" : "no");
