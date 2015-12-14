@@ -16,7 +16,7 @@ MicroNMEA.cpp : ../../src/MicroNMEA.cpp
 	cp $< $@
 
 MicroNMEA.o : MicroNMEA.cpp MicroNMEA.h
-	$(CXX) -DMICRO_NMEA_DEBUG $(CXXFLAGS) -c $< -o $@
+	$(CXX) -DMICRONMEA_DEBUG $(CXXFLAGS) -c $< -o $@
 
 test_MicroNMEA.o : test_MicroNMEA.cpp MicroNMEA.h
 

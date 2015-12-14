@@ -32,8 +32,13 @@ public:
   // automatically.
   static Stream& sendSentence(Stream &s, const char* sentence);
 
+  // Object with no buffer allocated, must call setBuffer later
+  MicroNMEA(void);
+  
   // User must decide and allocate the buffer
   MicroNMEA(void* buffer, uint8_t len);
+
+  void setBuffer(void* buf, uint8_t len);
   
   // Clear all fix information. isValid() will return false, Year,
   // month and day will all be zero. Hour, minute and second time will
@@ -158,7 +163,6 @@ private:
   uint8_t _bufferLen;
   char* _buffer;
   char *_ptr;
-  const char* const _bufferEnd; // = _buffer + _bufferLen;
 
   // Information from current MicroNMEA sentence
   char _talkerID;

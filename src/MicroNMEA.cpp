@@ -1,7 +1,7 @@
 #include <MicroNMEA.h>
 
 // Allow debugging/regression testing under normal g++ environment.
-#ifdef MICRO_MicroNMEA_DEBUG
+#ifdef MICRONMEA_DEBUG
 #include <stdlib.h>
 #include <iostream>
 using namespace std;
@@ -16,6 +16,7 @@ static long exp10(uint8_t b)
   return r;
 }
 
+
 static char toHex(uint8_t nibble)
 {
   if (nibble >= 10)
@@ -24,6 +25,7 @@ static char toHex(uint8_t nibble)
     return nibble + '0';
 
 }
+
 
 const char* MicroNMEA::skipField(const char* s)
 {
@@ -43,6 +45,7 @@ const char* MicroNMEA::skipField(const char* s)
   return NULL; // End of string or valid sentence
 }
 
+
 unsigned int MicroNMEA::parseUnsignedInt(const char *s, uint8_t len)
 {
   int r = 0;
@@ -50,6 +53,7 @@ unsigned int MicroNMEA::parseUnsignedInt(const char *s, uint8_t len)
     r = 10 * r + *s++ - '0';
   return r;
 }
+
 
 long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** eptr)
 {
@@ -96,6 +100,7 @@ long MicroNMEA::parseDegreeMinute(const char* s, uint8_t degWidth,
   return r;
 }
 
+
 const char* MicroNMEA::parseField(const char* s, char *result, int len)
 {
   if (s == NULL)
@@ -134,6 +139,7 @@ const char* MicroNMEA::generateChecksum(const char* s, char* checksum)
   return s;
 }
 
+
 bool MicroNMEA::testChecksum(const char* s)
 {
   char checksum[2];
@@ -142,7 +148,7 @@ bool MicroNMEA::testChecksum(const char* s)
 }
 
 
-#ifndef MICRO_NMEA_DEBUG
+#ifndef MICRONMEA_DEBUG
 // When debugging in normal g++ environment ostream doesn't have a
 // print member function. As sendSentence() isn't needed when
 // debugging don't compile it.
@@ -159,18 +165,36 @@ Stream& MicroNMEA::sendSentence(Stream& s, const char* sentence)
 }
 #endif
 
-MicroNMEA::MicroNMEA(void* buf, uint8_t len) :
-  _bufferLen(len),
-  _buffer((char*)buf),
-  _bufferEnd(&_buffer[_bufferLen - 1]),
+
+MicroNMEA::MicroNMEA(void) :
   _badChecksumHandler(NULL),
   _unknownSentenceHandler(NULL)
 {
-  _ptr = _buffer;
-  *_ptr = '\0';
-  _buffer[_bufferLen - 1] = '\0';
+  setBuffer(NULL, 0);
   clear();
 }
+
+
+MicroNMEA::MicroNMEA(void* buf, uint8_t len) :
+  _badChecksumHandler(NULL),
+  _unknownSentenceHandler(NULL)
+{
+  setBuffer(buf, len);
+  clear();
+}
+
+
+void MicroNMEA::setBuffer(void* buf, uint8_t len)
+{
+  _bufferLen = len;
+  _buffer = (char*)buf;
+   _ptr = _buffer;
+  if (_bufferLen) {
+    *_ptr = '\0';
+    _buffer[_bufferLen - 1] = '\0';
+  }
+}
+
 
 void MicroNMEA::clear(void)
 {
@@ -185,10 +209,13 @@ void MicroNMEA::clear(void)
   _year = _month = _day = 0;
   _hour = _minute = _second = 99;
   _hundredths = 0;
-  }
+}
+
 
 bool MicroNMEA::process(char c)
 {
+  if (_buffer == NULL || _bufferLen == 0)
+    return false;
   if (c == '\0' || c == '\n' || c == '\r') {
     // Terminate buffer then reset pointer
     *_ptr = '\0'; 
@@ -222,12 +249,13 @@ bool MicroNMEA::process(char c)
   }
   else {
     *_ptr = c;
-    if (_ptr < _bufferEnd)
+    if (_ptr < &_buffer[_bufferLen - 1])
       ++_ptr;
   }
   
   return false;
 }
+
 
 const char* MicroNMEA::parseTime(const char* s)
 {
@@ -238,6 +266,7 @@ const char* MicroNMEA::parseTime(const char* s)
   return skipField(s + 9);   
 }
 
+
 const char* MicroNMEA::parseDate(const char* s)
 {
   _day = parseUnsignedInt(s, 2);
@@ -245,6 +274,7 @@ const char* MicroNMEA::parseDate(const char* s)
   _year = parseUnsignedInt(s + 4, 2) + 2000;
   return skipField(s + 6);
 }
+
 
 bool MicroNMEA::processGGA(const char *s)
 {
@@ -300,3 +330,4 @@ bool MicroNMEA::processRMC(const char* s)
   // That's all we care about
   return true;
 }
+
