@@ -102,4 +102,6 @@ Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42289 (42.289m)
 --------------
+# Invalid RMC message (issue #1)
+$GPRMC,194812.00,V,,,,,,,290317,,,N*74
 
