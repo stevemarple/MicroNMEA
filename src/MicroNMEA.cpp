@@ -94,6 +94,11 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
 long MicroNMEA::parseDegreeMinute(const char* s, uint8_t degWidth,
 			     const char **eptr)
 {
+  if (*s == ',') {
+    if (eptr)
+      *eptr = skipField(s);
+    return 0;
+  }
   long r = parseUnsignedInt(s, degWidth) * 1000000L;
   s += degWidth;
   r += parseFloat(s, 6, eptr) / 60;
@@ -286,14 +291,21 @@ bool MicroNMEA::processGGA(const char *s)
   s = parseTime(s);
   // ++s;
   _latitude = parseDegreeMinute(s, 2, &s);
-  if (*s == 'S')
-    _latitude *= -1; 
-  s += 2; // Skip N/S and comma
+  if (*s == ',')
+    ++s;
+  else {
+    if (*s == 'S')
+      _latitude *= -1; 
+    s += 2; // Skip N/S and comma
+  }
   _longitude = parseDegreeMinute(s, 3, &s);
-  if (*s == 'W')
-    _longitude *= -1;
-  s += 2; // Skip E/W and comma
-
+  if (*s == ',')
+    ++s;
+  else {
+    if (*s == 'W')
+      _longitude *= -1;
+    s += 2; // Skip E/W and comma
+  }
   _isValid = (*s == '1' || *s == '2');
   s += 2; // Skip position fix flag and comma
   _numSat = parseFloat(s, 0, &s);
@@ -316,14 +328,21 @@ bool MicroNMEA::processRMC(const char* s)
   _isValid = (*s == 'A');
   s += 2; // Skip validity and comma
   _latitude = parseDegreeMinute(s, 2, &s);
-  if (*s == 'S')
-    _latitude *= -1; 
-  s += 2; // Skip N/S and comma
+  if (*s == ',')
+    ++s;
+  else {
+    if (*s == 'S')
+      _latitude *= -1; 
+    s += 2; // Skip N/S and comma
+  }
   _longitude = parseDegreeMinute(s, 3, &s);
-  if (*s == 'W')
-    _longitude *= -1;
-  s += 2; // Skip E/W and comma
-
+  if (*s == ',')
+    ++s;
+  else {
+    if (*s == 'W')
+      _longitude *= -1;
+    s += 2; // Skip E/W and comma
+  }
   _speed = parseFloat(s, 3, &s);
   _course = parseFloat(s, 3, &s);
   s = parseDate(s);
