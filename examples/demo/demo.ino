@@ -1,5 +1,9 @@
 #include <MicroNMEA.h>
-#include <MemoryFree.h>
+
+// To display free memory include the MemoryFree library, see
+// https://github.com/maniacbug/MemoryFree and uncomment the line
+// below
+//#include <MemoryFree.h>
 
 // Refer to serial devices by use
 HardwareSerial& console = Serial;
