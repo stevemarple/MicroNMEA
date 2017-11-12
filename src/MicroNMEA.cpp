@@ -248,7 +248,7 @@ bool MicroNMEA::process(char c)
       return true; // New valid MicroNMEA sentence
     }
     else {
-      if (_badChecksumHandler) 
+      if (_badChecksumHandler && *_buffer != '\0') // don't send empty buffers as bad checksums!
 	(*_badChecksumHandler)(*this);
     }
   }
