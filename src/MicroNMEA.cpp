@@ -264,6 +264,9 @@ bool MicroNMEA::process(char c)
 
 const char* MicroNMEA::parseTime(const char* s)
 {
+  if (*s == ',') {
+	  return s+1;
+  }
   _hour = parseUnsignedInt(s, 2);
   _minute = parseUnsignedInt(s + 2, 2);
   _second = parseUnsignedInt(s + 4, 2);
@@ -274,6 +277,9 @@ const char* MicroNMEA::parseTime(const char* s)
 
 const char* MicroNMEA::parseDate(const char* s)
 {
+  if (*s == ',') {
+    return s+1;
+  }
   _day = parseUnsignedInt(s, 2);
   _month = parseUnsignedInt(s + 2, 2);
   _year = parseUnsignedInt(s + 4, 2) + 2000;
