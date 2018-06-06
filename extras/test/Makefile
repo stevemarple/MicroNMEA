@@ -26,7 +26,8 @@ test_MicroNMEA : test_MicroNMEA.o MicroNMEA.o
 .PHONY : run
 run : test_MicroNMEA 
 	./test_MicroNMEA < nmea_sentences.txt
-
+# Or run with electric fence to catch segmentation faults
+# 	LD_PRELOAD=libefence.so ./test_MicroNMEA < nmea_sentences.txt
 
 # Regression testing. Run as "make regressiontest", should display
 # "TEST PASSED" if everything ok.
