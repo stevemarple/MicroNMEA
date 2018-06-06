@@ -21,3 +21,5 @@ $GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.289,M,49.1,M,,*4B
 # Invalid RMC message (issue #1)
 $GPRMC,194812.00,V,,,,,,,290317,,,N*74
+# Message from an invalid fix causing crashes (pull request #4))
+$GPRMC,,V,,,,,,,,,,N*53
