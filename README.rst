@@ -136,8 +136,10 @@ Return the talker ID from the last processed NMEA sentence. The meaning is the s
 Return the message ID from the last processed NMEA sentence, e.g, ``RMC``, ``GGA``. Useful when using callback functions.
 
 
+Contributors
+------------
 
-
-
+- Steve Marple
+- Christopher Liebman
 
  
