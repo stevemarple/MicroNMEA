@@ -22,7 +22,7 @@ void ppsHandler(void)
 	ppsTriggered = true;
 }
 
-void printUnknownSentence(MicroNMEA& nmea)
+void printUnknownSentence(const MicroNMEA& nmea)
 {
 	console.println();
 	console.print("Unknown sentence: ");
