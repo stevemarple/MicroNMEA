@@ -244,13 +244,13 @@ bool MicroNMEA::process(char c)
 				return processRMC(data);
 			else if (_unknownSentenceHandler)
 				(*_unknownSentenceHandler)(*this);
-
-			return true; // New valid MicroNMEA sentence
 		}
 		else {
 			if (_badChecksumHandler && *_buffer != '\0') // don't send empty buffers as bad checksums!
 				(*_badChecksumHandler)(*this);
 		}
+		// Return true for a complete, non-empty, sentence (even if not a valid one).
+		return *_buffer != '\0'; //
 	}
 	else {
 		*_ptr = c;
