@@ -151,6 +151,20 @@ public:
 	}
 
 	/**
+	 * @brief Get the height above WGS84 Geoid in millimetres.
+	 *
+	 * @return uint16_t year
+	 * @param alt Reference to long value where height is to be stored
+	 * @return true Altitude is valid
+	 * @return false Altitude not valid
+	 */
+	bool getGeoidHeight(long &alt) const {
+		if (_altitudeValid)
+			alt = _geoid_height;
+		return _altitudeValid;
+	}
+
+	/**
 	 * @brief Get the year
 	 *
 	 * @return uint16_t year
@@ -305,6 +319,7 @@ private:
 	bool _isValid;
 	long _latitude, _longitude; // In millionths of a degree
 	long _altitude; // In millimetres
+	long _geoid_height; // In millimetres
 	bool _altitudeValid;
 	long _speed, _course;
 	uint16_t _year;

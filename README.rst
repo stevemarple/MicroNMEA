@@ -87,6 +87,10 @@ Longitude in millionths of a degree, East is positive. ::
 
 Altitude in millimetres, returns true if the altitude was obtained from a valid fix. ::
 
+    bool getGeoidHeight(long &hgt) const
+
+Height above WGS84 Geoid in millimetres, returns true if the height was obtained from a valid fix. ::
+
     uint16_t getYear(void) const
     uint8_t getMonth(void) const
     uint8_t getDay(void) const
