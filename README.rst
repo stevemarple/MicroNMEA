@@ -79,7 +79,7 @@ Validity of latest fix. ::
 
 Latitude in millionths of a degree, North is positive. ::
 
-    long getLlongitude(void) const
+    long getLongitude(void) const
 
 Longitude in millionths of a degree, East is positive. ::
 
