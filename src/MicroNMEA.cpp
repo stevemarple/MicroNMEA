@@ -310,7 +310,7 @@ bool MicroNMEA::processGGA(const char *s)
 			_longitude *= -1;
 		s += 2; // Skip E/W and comma
 	}
-	_isValid = (*s == '1' || *s == '2');
+	_isValid = (*s >= '1' || *s <= '5');
 	s += 2; // Skip position fix flag and comma
 	_numSat = parseFloat(s, 0, &s);
 	_hdop = parseFloat(s, 1, &s);
