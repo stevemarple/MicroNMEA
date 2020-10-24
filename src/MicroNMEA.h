@@ -1,7 +1,7 @@
 #ifndef MICRONMEA_H
 #define MICRONMEA_H
 
-#define MICRONMEA_VERSION "2.0.2"
+#define MICRONMEA_VERSION "2.0.3"
 #include <limits.h>
 
 /*
