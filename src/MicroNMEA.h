@@ -55,10 +55,30 @@ public:
 	uint8_t getNumSatellites(void) const {
 		return _numSat;
 	}
+	
+	// Fix selection (A = Auto, M = Manual)
+	char getAutofix (void) const {
+		return _autofix;
+	}
+
+	// Type of fix (1= no fix, 2= 2D, 3= 3D)
+	uint8_t getFix (void) const {
+		return _fix;
+	}
+	
+	// Dilution of precision, in tenths
+	uint8_t getPDOP (void) const {
+		return _pdop;
+	}
 
 	// Horizontal dilution of precision, in tenths
 	uint8_t getHDOP(void) const {
 		return _hdop;
+	}
+
+	// Vertical dilution of precision, in tenths
+	uint8_t getVDOP (void) const {
+		return _vdop;
 	}
 
 	// Validity of latest fix
@@ -154,6 +174,7 @@ protected:
 	const char* parseDate(const char* s);
 
 	bool processGGA(const char *s);
+	bool processGSA (const char* s);
 	bool processRMC(const char* s);
 
 private:
@@ -178,7 +199,9 @@ private:
 	uint16_t _year;
 	uint8_t _month, _day, _hour, _minute, _second, _hundredths;
 	uint8_t _numSat;
-	uint8_t _hdop;
+	uint8_t _hdop, _vdop, _pdop;
+	char _autofix;
+	uint8_t _fix;
 
 	void (*_badChecksumHandler)(MicroNMEA &nmea);
 	void (*_unknownSentenceHandler)(MicroNMEA &nmea);

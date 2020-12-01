@@ -246,6 +246,8 @@ bool MicroNMEA::process(char c)
 				return processGGA(data);
 			else if (strcmp(&_messageID[0], "RMC") == 0)
 				return processRMC(data);
+			else if (strcmp (&_messageID[0], "GSA") == 0)
+				return processGSA (data);
 			else if (_unknownSentenceHandler)
 				(*_unknownSentenceHandler)(*this);
 		}
@@ -288,6 +290,20 @@ const char* MicroNMEA::parseDate(const char* s)
 	return skipField(s + 6);
 }
 
+bool MicroNMEA::processGSA (const char* s) {
+	_autofix = *s;
+	s=s+2; // Skip fix and comma
+	_fix = parseFloat (s, 0, &s);
+	for (int i = 0; i < 12; i++) {
+		// Skip 12 satellite ID fields
+		s = skipField (s);
+	}
+	_pdop = parseFloat (s, 1, &s);
+	_hdop = parseFloat (s, 1, &s);
+	_vdop = parseFloat (s, 1, &s);
+
+	return true;
+}
 
 bool MicroNMEA::processGGA(const char *s)
 {
