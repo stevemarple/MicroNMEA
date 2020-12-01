@@ -104,4 +104,6 @@ Altitude     42289 (42.289m)
 --------------
 # Invalid RMC message (issue #1)
 $GPRMC,194812.00,V,,,,,,,290317,,,N*74
+# Message from an invalid fix causing crashes (pull request #4))
+$GPRMC,,V,,,,,,,,,,N*53
 
