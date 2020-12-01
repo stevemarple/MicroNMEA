@@ -29,8 +29,8 @@ static char toHex(uint8_t nibble)
 
 const char* MicroNMEA::skipField(const char* s)
 {
-	if (s == NULL)
-		return NULL;
+	if (s == nullptr)
+		return nullptr;
 
 	while (!isEndOfFields(*s)) {
 		if (*s == ',') {
@@ -42,7 +42,7 @@ const char* MicroNMEA::skipField(const char* s)
 		}
 		++s;
 	}
-	return NULL; // End of string or valid sentence
+	return nullptr; // End of string or valid sentence
 }
 
 
@@ -108,8 +108,8 @@ long MicroNMEA::parseDegreeMinute(const char* s, uint8_t degWidth,
 
 const char* MicroNMEA::parseField(const char* s, char *result, int len)
 {
-	if (s == NULL)
-		return NULL;
+	if (s == nullptr)
+		return nullptr;
 
 	int i = 0;
 	while (*s != ',' && !isEndOfFields(*s)) {
@@ -123,7 +123,7 @@ const char* MicroNMEA::parseField(const char* s, char *result, int len)
 	if (*s == ',')
 		return ++s; // Location of start of next field
 	else
-		return NULL; // End of string or valid sentence
+		return nullptr; // End of string or valid sentence
 }
 
 
@@ -172,17 +172,21 @@ Stream& MicroNMEA::sendSentence(Stream& s, const char* sentence)
 
 
 MicroNMEA::MicroNMEA(void) :
-	_badChecksumHandler(NULL),
-	_unknownSentenceHandler(NULL)
+	_talkerID('\0'),
+	_messageID{0},
+	_badChecksumHandler(nullptr),
+	_unknownSentenceHandler(nullptr)
 {
-	setBuffer(NULL, 0);
+	setBuffer(nullptr, 0);
 	clear();
 }
 
 
 MicroNMEA::MicroNMEA(void* buf, uint8_t len) :
-	_badChecksumHandler(NULL),
-	_unknownSentenceHandler(NULL)
+	_talkerID('\0'),
+	_messageID{0},
+	_badChecksumHandler(nullptr),
+	_unknownSentenceHandler(nullptr)
 {
 	setBuffer(buf, len);
 	clear();
@@ -219,7 +223,7 @@ void MicroNMEA::clear(void)
 
 bool MicroNMEA::process(char c)
 {
-	if (_buffer == NULL || _bufferLen == 0)
+	if (_buffer == nullptr || _bufferLen == 0)
 		return false;
 	if (c == '\0' || c == '\n' || c == '\r') {
 		// Terminate buffer then reset pointer

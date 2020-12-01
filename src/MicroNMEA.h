@@ -17,12 +17,12 @@ public:
 	static const char* skipField(const char* s);
 	static unsigned int parseUnsignedInt(const char* s, uint8_t len);
 	static long parseFloat(const char* s, uint8_t log10Multiplier,
-						   const char** eptr = NULL);
+						   const char** eptr = nullptr);
 	static long parseDegreeMinute(const char* s, uint8_t degWidth,
-								  const char** eptr = NULL);
-	static const char* parseToComma(const char* s, char *result = NULL,
+								  const char** eptr = nullptr);
+	static const char* parseToComma(const char* s, char *result = nullptr,
 									int len = 0);
-	static const char* parseField(const char* s, char *result = NULL,
+	static const char* parseField(const char* s, char *result = nullptr,
 								  int len = 0);
 	static const char* generateChecksum(const char* s, char* checksum);
 	static bool testChecksum(const char* s);
