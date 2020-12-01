@@ -297,8 +297,12 @@ bool MicroNMEA::processGGA(const char *s)
 	_navSystem = _talkerID;
 
 	s = parseTime(s);
+	if (s == nullptr)
+		return false;
 	// ++s;
 	_latitude = parseDegreeMinute(s, 2, &s);
+	if (s == nullptr)
+		return false;
 	if (*s == ',')
 		++s;
 	else {
@@ -307,6 +311,8 @@ bool MicroNMEA::processGGA(const char *s)
 		s += 2; // Skip N/S and comma
 	}
 	_longitude = parseDegreeMinute(s, 3, &s);
+	if (s == nullptr)
+		return false;
 	if (*s == ',')
 		++s;
 	else {
@@ -317,8 +323,14 @@ bool MicroNMEA::processGGA(const char *s)
 	_isValid = (*s >= '1' && *s <= '5');
 	s += 2; // Skip position fix flag and comma
 	_numSat = parseFloat(s, 0, &s);
+	if (s == nullptr)
+		return false;
 	_hdop = parseFloat(s, 1, &s);
+	if (s == nullptr)
+		return false;
 	_altitude = parseFloat(s, 3, &s);
+	if (s == nullptr)
+		return false;
 	_altitudeValid = true;
 	// That's all we care about
 	return true;
@@ -333,9 +345,13 @@ bool MicroNMEA::processRMC(const char* s)
 	_navSystem = _talkerID;
 
 	s = parseTime(s);
+	if (s == nullptr)
+		return false;
 	_isValid = (*s == 'A');
 	s += 2; // Skip validity and comma
 	_latitude = parseDegreeMinute(s, 2, &s);
+	if (s == nullptr)
+		return false;
 	if (*s == ',')
 		++s;
 	else {
@@ -344,6 +360,8 @@ bool MicroNMEA::processRMC(const char* s)
 		s += 2; // Skip N/S and comma
 	}
 	_longitude = parseDegreeMinute(s, 3, &s);
+	if (s == nullptr)
+		return false;
 	if (*s == ',')
 		++s;
 	else {
@@ -352,7 +370,11 @@ bool MicroNMEA::processRMC(const char* s)
 		s += 2; // Skip E/W and comma
 	}
 	_speed = parseFloat(s, 3, &s);
+	if (s == nullptr)
+		return false;
 	_course = parseFloat(s, 3, &s);
+	if (s == nullptr)
+		return false;
 	s = parseDate(s);
 	// That's all we care about
 	return true;
