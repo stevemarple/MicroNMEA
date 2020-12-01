@@ -33,7 +33,7 @@ Sentence    $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.2,M,49.1,M,,
 Valid        true
 TalkerID     P
 MessageID    GGA
-Date/time    0000-00-00T11:13:09.00
+Time         11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
@@ -47,8 +47,7 @@ MessageID    RMC
 Date/time    2015-09-14T11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
-Alt. valid   true
-Altitude     42200 (42.200m)
+Alt. valid   false
 --------------
 # Checksum below deliberately wrong
 $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*XX
@@ -64,8 +63,7 @@ MessageID    RMC
 Date/time    2015-09-14T11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
-Alt. valid   true
-Altitude     42200 (42.200m)
+Alt. valid   false
 --------------
 # Try sentences with higher than normal latitude/longitude resolution
 $GPRMC,111309.00,A,5400.600088,N,00247.100099,W,00.00,302.5,140915,,,A*4C
@@ -76,15 +74,14 @@ MessageID    RMC
 Date/time    2015-09-14T11:13:09.00
 Latitude     54010001 (54.010001 deg)
 Longitude    -2785001 (-2.785001 deg)
-Alt. valid   true
-Altitude     42200 (42.200m)
+Alt. valid   false
 --------------
 $GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
 Sentence    $GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
 Valid        true
 TalkerID     P
 MessageID    GGA
-Date/time    2015-09-14T11:13:09.00
+Time         11:13:09.00
 Latitude     54010001 (54.010001 deg)
 Longitude    -2785001 (-2.785001 deg)
 Alt. valid   true
@@ -96,7 +93,7 @@ Sentence    $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.289,M,49.1,M
 Valid        true
 TalkerID     P
 MessageID    GGA
-Date/time    2015-09-14T11:13:09.00
+Time         11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
