@@ -3,14 +3,22 @@
 
 #define MICRONMEA_VERSION "2.0.3"
 #include <limits.h>
-
-/*
- * A simple Arduino class to process MicroNMEA sentences from GPS and GNSS
- * receivers.
- */
-
 #include <Arduino.h>
 
+/**
+ * @file MicroNMEA.h
+ * @author Steve Marple
+ */
+
+
+
+/**
+ * @class MicroNMEA
+ * @brief Process MicroNMEA sentences from GPS and GNSS receivers.
+ * @details The user is responsible to allocating the buffer that MicroNMEA uses. This
+ * enables a static buffer to be used if desired so that `malloc()` is not required.
+ * Values returned are integers, floating-point maths is not used.
+ */
 class MicroNMEA {
 public:
 
@@ -27,17 +35,35 @@ public:
 	static const char* generateChecksum(const char* s, char* checksum);
 	static bool testChecksum(const char* s);
 
-	// Write MicroNMEA sentence to oputput stream. Sentence must start with
-	// '$', the checksum and <CR><NL> terminators will be appended
-	// automatically.
+	/**
+	 * @brief Send a NMEA sentence to the GNSS receiver.
+	 *
+	 * @param s Stream to which the GNSS receiver is connected
+	 * @param sentence The NMEA sentence to send
+	 * @details The sentence must start with `$`; the checksum
+	 * and `\r\n` terminators will be appended automatically.
+	 * @return The GNSS stream
+	 */
 	static Stream& sendSentence(Stream &s, const char* sentence);
 
-	// Object with no buffer allocated, must call setBuffer later
+	/**
+	 * @brief Default constructor
+	 * @details User **must** call setrBuffer() before use
+	 */
 	MicroNMEA(void);
 
-	// User must decide and allocate the buffer
+
+	/**
+	 * @brief Construct object and pass in the buffer allocated for MicroNMEA to use
+	 */
 	MicroNMEA(void* buffer, uint8_t len);
 
+	/**
+	 * @brief Set the buffer object
+	 *
+	 * @param buf Address of the buffer
+	 * @param len Number of bytes allocated
+	 */
 	void setBuffer(void* buf, uint8_t len);
 
 	// Clear all fix information. isValid() will return false, Year,
@@ -45,91 +71,197 @@ public:
 	// be set to 99. Speed, course and altitude will be set to
 	// LONG_MIN; the altitude validity flag will be false. Latitude and
 	// longitude will be set to 999 degrees.
+	/**
+	 * @brief Clear all fix information
+	 * @details `isValid()` will return false, year,
+	 * month and day will all be zero. Hour, minute and second will
+	 * be set to 99. Speed, course and altitude will be set to
+	 * `LONG_MIN`; the altitude validity flag will be false. Latitude and
+	 * longitude will be set to 999 degrees.
+	 */
 	void clear(void);
 
-	// Navigation system, N=GNSS, P=GPS, L=GLONASS, A=Galileo, '\0'=none
+	/**
+	 * @brief Get the navigation system in use
+	 * @details `N` = GNSS, `P` = GPS, `L` = GLONASS, `A` = Galileo, `\0` = none
+	 * @return char
+	 */
 	char getNavSystem(void) const {
 		return _navSystem;
 	}
 
+	/**
+	 * @brief Get the number of satellites in use
+	 *
+	 * @return uint8_t
+	 */
 	uint8_t getNumSatellites(void) const {
 		return _numSat;
 	}
 
-	// Horizontal dilution of precision, in tenths
+	/**
+	 * @brief Get the horizontal dilution of precision (HDOP), in tenths
+	 * @details A HDOP value of 1.1 is returned as `11`
+	 * @return uint8_t
+	 */
 	uint8_t getHDOP(void) const {
 		return _hdop;
 	}
 
-	// Validity of latest fix
+	/**
+	 * @brief Inquire if latest fix is valid
+	 *
+	 * @return true Valid
+	 * @return false Not valid
+	 */
 	bool isValid(void) const {
 		return _isValid;
 	}
 
-	// Latitude in millionths of a degree. North is positive.
+	/**
+	 * @brief Get the latitude, in millionths of a degree
+	 * @details North is positive.
+	 * @return long
+	 */
 	long getLatitude(void) const {
 		return _latitude;
 	}
 
-	// Longitude in millionths of a degree. East is positive.
+	/**
+	 * @brief Get the longitude, in millionths of a degree
+	 * @details East is positive.
+	 * @return long
+	 */
 	long getLongitude(void) const {
 		return _longitude;
 	}
 
 	// Altitude in millimetres.
+	/**
+	 * @brief Get the altitude in millmetres
+	 *
+	 * @param alt Reference to long value where altitude is to be stored
+	 * @return true Altitude is valid
+	 * @return false Altitude not valid
+	 */
 	bool getAltitude(long &alt) const {
 		if (_altitudeValid)
 			alt = _altitude;
 		return _altitudeValid;
 	}
 
+	/**
+	 * @brief Get the year
+	 *
+	 * @return uint16_t year
+	 */
 	uint16_t getYear(void) const {
 		return _year;
 	}
 
+	/**
+	 * @brief Get the month (1 - 12 inclusive)
+	 *
+	 * @return uint8_t year
+	 */
 	uint8_t getMonth(void) const {
 		return _month;
 	}
 
+	/**
+	 * @brief Get the day of month (1 - 31 inclusive)
+	 *
+	 * @return uint8_t month
+	 */
 	uint8_t getDay(void) const {
 		return _day;
 	}
 
+	/**
+	 * @brief Get the hour
+	 *
+	 * @return uint8_t hour
+	 */
 	uint8_t getHour(void) const {
 		return _hour;
 	}
 
+	/**
+	 * @brief Get the minute
+	 *
+	 * @return uint8_t minute
+	 */
 	uint8_t getMinute(void) const {
 		return _minute;
 	}
 
+	/**
+	 * @brief Get the integer part of the second
+	 *
+	 * @return uint8_t second
+	 */
 	uint8_t getSecond(void) const {
 		return _second;
 	}
 
+	/**
+	 * @brief Get the hundredths part of the second
+	 *
+	 * @return uint8_t hundredths
+	 */
 	uint8_t getHundredths(void) const {
 		return _hundredths;
 	}
 
+	/**
+	 * @brief Get the speed
+	 *
+	 * @return uint8_t speed
+	 */
 	long getSpeed(void) const {
 		return _speed;
 	}
 
+	/**
+	 * @brief Get the direction of travel
+	 * @return Direction in thousandths of a degree, clockwise from North
+	 */
 	long getCourse(void) const {
 		return _course;
 	}
 
+	/**
+	 * @brief Instruct MicroNMEA to process a character
+	 *
+	 * @param c Character to process
+	 * @return true A complete non-empty sentence has been processed (may not be valid)
+	 * @return false End of sentence not detected
+	 */
 	bool process(char c);
 
+	/**
+	 * @brief Register a handler to be called when bad checksums are detected
+	 *
+	 * @param handler pointer to handler function
+	 */
 	void setBadChecksumHandler(void (*handler)(MicroNMEA& nmea)) {
 		_badChecksumHandler = handler;
 	}
 
+	/**
+	 * @brief Register a handler to be called when an unknown NMEA sentence is detected
+	 *
+	 * @param handler pointer to handler function
+	 */
 	void setUnknownSentenceHandler(void (*handler)(MicroNMEA& nmea)) {
 		_unknownSentenceHandler = handler;
 	}
 
-	// Current MicroNMEA sentence.
+	/**
+	 * @brief Get NMEA sentence
+	 *
+	 * @return const char*
+	 */
 	const char* getSentence(void) const {
 		return _buffer;
 	}

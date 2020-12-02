@@ -145,3 +145,7 @@ Contributors
 - Noah-Jonathan Rosa
 - Philipp Tölke
 
+Documentation
+-------------
+
+For documentation please see Read The Docs, https://micronmea.readthedocs.io/en/latest/.
