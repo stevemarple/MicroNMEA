@@ -27,6 +27,7 @@ isValid	KEYWORD2
 getLatitude	KEYWORD2
 getLongitude	KEYWORD2
 getAltitude	KEYWORD2
+getGeoidHeight	KEYWORD2
 getYear	KEYWORD2
 getMonth	KEYWORD2
 getDay	KEYWORD2

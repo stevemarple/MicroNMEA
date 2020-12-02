@@ -83,6 +83,13 @@ public:
 		return _altitudeValid;
 	}
 
+	// Height above WGS84 Geoid in millimetres.
+	bool getGeoidHeight(long &alt) const {
+		if (_altitudeValid)
+			alt = _geoid_height;
+		return _altitudeValid;
+	}
+
 	uint16_t getYear(void) const {
 		return _year;
 	}
@@ -173,6 +180,7 @@ private:
 	bool _isValid;
 	long _latitude, _longitude; // In millionths of a degree
 	long _altitude; // In millimetres
+	long _geoid_height; // In millimetres
 	bool _altitudeValid;
 	long _speed, _course;
 	uint16_t _year;

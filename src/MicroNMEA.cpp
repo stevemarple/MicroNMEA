@@ -331,6 +331,11 @@ bool MicroNMEA::processGGA(const char *s)
 	_altitude = parseFloat(s, 3, &s);
 	if (s == nullptr)
 		return false;
+	s += 2; // Skip M and comma
+	_geoid_height = parseFloat(s, 3, &s);
+	if (s == nullptr)
+		return false;
+	s += 2; // Skip M and comma
 	_altitudeValid = true;
 	// That's all we care about
 	return true;
