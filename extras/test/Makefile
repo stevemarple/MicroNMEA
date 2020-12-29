@@ -2,7 +2,7 @@ DIFF = diff
 RM = rm -f
 CXXFLAGS += -ggdb -Wall -I.
 
-default: test_MicroNMEA
+default: regressiontest
 
 .PHONY : MicroNMEA.h
 MicroNMEA.h : ../../src/MicroNMEA.h
