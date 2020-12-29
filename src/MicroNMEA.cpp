@@ -242,9 +242,9 @@ bool MicroNMEA::process(char c)
 				data = parseField(&_buffer[1], &_messageID[0], sizeof(_messageID));
 			}
 
-			if (strcmp(&_messageID[0], "GGA") == 0)
+			if (data != nullptr && strcmp(&_messageID[0], "GGA") == 0)
 				return processGGA(data);
-			else if (strcmp(&_messageID[0], "RMC") == 0)
+			else if (data != nullptr && strcmp(&_messageID[0], "RMC") == 0)
 				return processRMC(data);
 			else if (_unknownSentenceHandler)
 				(*_unknownSentenceHandler)(*this);
