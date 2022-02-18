@@ -1,7 +1,7 @@
 #ifndef MICRONMEA_H
 #define MICRONMEA_H
 
-#define MICRONMEA_VERSION "2.0.5"
+#define MICRONMEA_VERSION "2.0.6"
 #include <limits.h>
 #include <Arduino.h>
 
