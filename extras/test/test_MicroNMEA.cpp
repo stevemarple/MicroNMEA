@@ -82,11 +82,14 @@ int main(void)
         if (strcmp(nmea.getMessageID(), "GGA") == 0) {
           cout << "Time         ";
           formatTime(cout, nmea);
-          cout << endl;
+          cout << endl
+               << "Num sat      " << int(nmea.getNumSatellites()) << endl
+               << std::setprecision(1)
+               << "HDOP         " << double(nmea.getHDOP() / 10.0) << endl;
         } else {
           cout << "Date/time    ";
           formatDateTime(cout, nmea);
-          cout << endl;
+          cout  << endl;
         }
 
         cout << fixed << setprecision(6)

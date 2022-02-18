@@ -34,6 +34,8 @@ Valid        true
 TalkerID     P
 MessageID    GGA
 Time         11:13:09.00
+Num sat      16
+HDOP         0.7
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
@@ -82,6 +84,8 @@ Valid        true
 TalkerID     P
 MessageID    GGA
 Time         11:13:09.00
+Num sat      16
+HDOP         0.7
 Latitude     54010001 (54.010001 deg)
 Longitude    -2785001 (-2.785001 deg)
 Alt. valid   true
@@ -94,6 +98,8 @@ Valid        true
 TalkerID     P
 MessageID    GGA
 Time         11:13:09.00
+Num sat      16
+HDOP         0.7
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
