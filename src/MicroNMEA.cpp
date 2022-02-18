@@ -322,10 +322,12 @@ bool MicroNMEA::processGGA(const char *s)
 	}
 	_isValid = (*s >= '1' && *s <= '5');
 	s += 2; // Skip position fix flag and comma
-	_numSat = parseFloat(s, 0, &s);
+	long tmp = parseFloat(s, 0, &s);
+	_numSat = (tmp > 255 ? 255 : (tmp < 0 ? 0 : tmp));
 	if (s == nullptr)
 		return false;
-	_hdop = parseFloat(s, 1, &s);
+	tmp = parseFloat(s, 1, &s);
+	_hdop = (tmp > 255 || tmp < 0 ? 255 : tmp);
 	if (s == nullptr)
 		return false;
 	_altitude = parseFloat(s, 3, &s);
