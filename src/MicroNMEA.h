@@ -160,7 +160,7 @@ public:
 	 */
 	bool getGeoidHeight(long &alt) const {
 		if (_altitudeValid)
-			alt = _geoid_height;
+			alt = _geoidHeight;
 		return _altitudeValid;
 	}
 
@@ -319,7 +319,7 @@ private:
 	bool _isValid;
 	long _latitude, _longitude; // In millionths of a degree
 	long _altitude; // In millimetres
-	long _geoid_height; // In millimetres
+	long _geoidHeight; // In millimetres
 	bool _altitudeValid;
 	long _speed, _course;
 	uint16_t _year;
