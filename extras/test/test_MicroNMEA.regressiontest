@@ -150,4 +150,17 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   false
 --------------
+# Message without height above the geoid
+$GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.2,M,,,,*15
+Sentence    $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.2,M,,,,*15
+Valid        true
+TalkerID     P
+MessageID    GGA
+Time         11:13:09.00
+Num sat      16
+HDOP         0.7
+Latitude     54010000 (54.010000 deg)
+Longitude    -2785000 (-2.785000 deg)
+Alt. valid   false
+--------------
 
