@@ -40,6 +40,8 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*4C
 Sentence    $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*4C
@@ -50,6 +52,7 @@ Date/time    2015-09-14T11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   false
+GeoHt valid  false
 --------------
 # Checksum below deliberately wrong
 $GPRMC,111309.00,A,5400.6000,N,00247.1000,W,00.00,302.5,140915,,,A*XX
@@ -66,6 +69,7 @@ Date/time    2015-09-14T11:13:09.00
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   false
+GeoHt valid  false
 --------------
 # Try sentences with higher than normal latitude/longitude resolution
 $GPRMC,111309.00,A,5400.600088,N,00247.100099,W,00.00,302.5,140915,,,A*4C
@@ -77,6 +81,7 @@ Date/time    2015-09-14T11:13:09.00
 Latitude     54010001 (54.010001 deg)
 Longitude    -2785001 (-2.785001 deg)
 Alt. valid   false
+GeoHt valid  false
 --------------
 $GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
 Sentence    $GPGGA,111309.00,5400.600088,N,00247.100099,W,1,16,00.7,042.2,M,49.1,M,,*4A
@@ -90,6 +95,8 @@ Latitude     54010001 (54.010001 deg)
 Longitude    -2785001 (-2.785001 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 # Sentence with higher than normal altitude resolution
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.289,M,49.1,M,,*4B
@@ -104,6 +111,8 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42289 (42.289m)
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 # Invalid RMC message (issue #1)
 $GPRMC,194812.00,V,,,,,,,290317,,,N*74
@@ -122,6 +131,8 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 # Test for aritmetic underflow in numSat and HDOP
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,-400,-30.0,042.2,M,49.1,M,,*7D
@@ -136,6 +147,8 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 # GGA with invalid (unparsable) altitude field
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,invalid,M,49.1,M,,*11
@@ -149,6 +162,8 @@ HDOP         0.7
 Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   false
+GeoHt valid  true
+GeoHt        49100 (49.100m)
 --------------
 # Message without height above the geoid
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.2,M,,,,*15
@@ -163,6 +178,7 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  false
 --------------
 # Message with invalid height above the geoid
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,042.2,M,invalid,,,*64
@@ -177,5 +193,6 @@ Latitude     54010000 (54.010000 deg)
 Longitude    -2785000 (-2.785000 deg)
 Alt. valid   true
 Altitude     42200 (42.200m)
+GeoHt valid  false
 --------------
 

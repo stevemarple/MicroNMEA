@@ -106,7 +106,14 @@ int main(void)
                << fixed << setprecision(3) << (altitude / 1e3) << "m)" << endl;
         else
           cout << "Alt. valid   false" << endl;
-
+        long geoidHeight;
+        if (nmea.getGeoidHeight(geoidHeight))
+          cout << fixed << setprecision(3)
+               << "GeoHt valid  true" << endl
+               << "GeoHt        " << geoidHeight << " ("
+               << fixed << setprecision(3) << (geoidHeight / 1e3) << "m)" << endl;
+        else
+          cout << "GeoHt valid  false" << endl;
 
         cout << separator << endl;
       }
