@@ -218,6 +218,7 @@ void MicroNMEA::clear(void)
 	_longitude = 999000000L;
 	_altitude = _speed = _course = LONG_MIN;
 	_altitudeValid = false;
+	_geoidHeightValid = false;
 	_year = _month = _day = 0;
 	_hour = _minute = _second = 99;
 	_hundredths = 0;
@@ -333,15 +334,16 @@ bool MicroNMEA::processGGA(const char *s)
 	_hdop = (tmp > 255 || tmp < 0 ? 255 : tmp);
 	if (s == nullptr)
 		return false;
-	bool resultValid, resultValid2;
+	bool resultValid;
 	_altitude = parseFloat(s, 3, &s, &resultValid);
 	if (s == nullptr)
 		return false;
+	if (resultValid) _altitudeValid = true;
 	s += 2; // Skip M and comma
-	_geoidHeight = parseFloat(s, 3, &s, &resultValid2);
+	_geoidHeight = parseFloat(s, 3, &s, &resultValid);
 	if (s == nullptr)
 		return false;
-	if (resultValid && resultValid2) _altitudeValid = true;
+	if (resultValid) _geoidHeightValid = true;
 	// That's all we care about
 	return true;
 }
