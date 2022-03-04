@@ -159,9 +159,9 @@ public:
 	 * @return false Altitude not valid
 	 */
 	bool getGeoidHeight(long &alt) const {
-		if (_altitudeValid)
+		if (_geoidHeightValid)
 			alt = _geoidHeight;
-		return _altitudeValid;
+		return _geoidHeightValid;
 	}
 
 	/**
@@ -319,8 +319,9 @@ private:
 	bool _isValid;
 	long _latitude, _longitude; // In millionths of a degree
 	long _altitude; // In millimetres
-	long _geoidHeight; // In millimetres
 	bool _altitudeValid;
+	long _geoidHeight; // In millimetres
+	bool _geoidHeightValid;
 	long _speed, _course;
 	uint16_t _year;
 	uint8_t _month, _day, _hour, _minute, _second, _hundredths;
