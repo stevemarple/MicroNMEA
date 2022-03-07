@@ -25,7 +25,7 @@ public:
 	static const char* skipField(const char* s);
 	static unsigned int parseUnsignedInt(const char* s, uint8_t len);
 	static long parseFloat(const char* s, uint8_t log10Multiplier,
-						   const char** eptr = nullptr);
+						   const char** eptr = nullptr, bool *resultValid = nullptr);
 	static long parseDegreeMinute(const char* s, uint8_t degWidth,
 								  const char** eptr = nullptr);
 	static const char* parseToComma(const char* s, char *result = nullptr,

@@ -27,3 +27,5 @@ $GPRMC,,V,,,,,,,,,,N*53
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,400,30.0,042.2,M,49.1,M,,*7D
 # Test for aritmetic underflow in numSat and HDOP
 $GPGGA,111309.00,5400.6000,N,00247.1000,W,1,-400,-30.0,042.2,M,49.1,M,,*7D
+# GGA with invalid (unparsable) altitude field
+$GPGGA,111309.00,5400.6000,N,00247.1000,W,1,16,00.7,invalid,M,49.1,M,,*11
