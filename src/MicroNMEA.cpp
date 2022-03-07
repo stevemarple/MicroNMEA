@@ -55,10 +55,11 @@ unsigned int MicroNMEA::parseUnsignedInt(const char *s, uint8_t len)
 }
 
 
-long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** eptr)
+long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** eptr, bool * resultValid)
 {
 	int8_t neg = 1;
 	long r = 0;
+	if (resultValid) *resultValid = false;
 	while (isspace(*s))
 		++s;
 	if (*s == '-') {
@@ -68,8 +69,10 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
 	else if (*s == '+')
 		++s;
 
-	while (isdigit(*s))
+	while (isdigit(*s)) {
 		r = 10*r + *s++ - '0';
+		if (resultValid) *resultValid = true;
+	}
 	r *= exp10(log10Multiplier);
 
 	if (*s == '.') {
@@ -330,10 +333,11 @@ bool MicroNMEA::processGGA(const char *s)
 	_hdop = (tmp > 255 || tmp < 0 ? 255 : tmp);
 	if (s == nullptr)
 		return false;
-	_altitude = parseFloat(s, 3, &s);
+	bool resultValid;
+	_altitude = parseFloat(s, 3, &s, &resultValid);
 	if (s == nullptr)
 		return false;
-	_altitudeValid = true;
+	if (resultValid) _altitudeValid = true;
 	// That's all we care about
 	return true;
 }
