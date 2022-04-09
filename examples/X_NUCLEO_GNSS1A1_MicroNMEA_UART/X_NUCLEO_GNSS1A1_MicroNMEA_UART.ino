@@ -35,7 +35,7 @@
  *
  ******************************************************************************
  */
- 
+
 //NOTE: for compatibility with the Arduino Due some additional cabling needs to be performed:
 //      pin D8 should be connected to pin D18 and pin D2 should be connected to pin D19
 
@@ -70,122 +70,122 @@ void ppsHandler(void)
 
 void gpsHardwareReset()
 {
-   // Empty input buffer
-   while (gps.available())
-      gps.read();
+  // Empty input buffer
+  while (gps.available())
+    gps.read();
 
-   //reset the device
-   digitalWrite(RESET_PIN, LOW);
-   delay(50);
-   digitalWrite(RESET_PIN, HIGH);
+  //reset the device
+  digitalWrite(RESET_PIN, LOW);
+  delay(50);
+  digitalWrite(RESET_PIN, HIGH);
 
-   //wait for reset to apply
-   delay(2000);
+  //wait for reset to apply
+  delay(2000);
 
 }
+
 
 void setup(void)
 {
-   console.begin(115200); // console
-   gps.begin(9600); // gps
+  console.begin(115200); // console
+  gps.begin(9600); // gps
 
-   pinMode(LED_BUILTIN, OUTPUT);
-   digitalWrite(LED_BUILTIN, ledState);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, ledState);
 
-   //Start the module
-   pinMode(RESET_PIN, OUTPUT);
-   digitalWrite(RESET_PIN, HIGH);
-   console.println("Resetting GPS module ...");
-   gpsHardwareReset();
-   console.println("... done");
+  //Start the module
+  pinMode(RESET_PIN, OUTPUT);
+  digitalWrite(RESET_PIN, HIGH);
+  console.println("Resetting GPS module ...");
+  gpsHardwareReset();
+  console.println("... done");
 
-   // Change the echoing messages to the ones recognized by the MicroNMEA library
-   MicroNMEA::sendSentence(gps, "$PSTMSETPAR,1201,0x00000042");
-   MicroNMEA::sendSentence(gps, "$PSTMSAVEPAR");
+  // Change the echoing messages to the ones recognized by the MicroNMEA library
+  MicroNMEA::sendSentence(gps, "$PSTMSETPAR,1201,0x00000042");
+  MicroNMEA::sendSentence(gps, "$PSTMSAVEPAR");
 
-   //Reset the device so that the changes could take plaace
-   MicroNMEA::sendSentence(gps, "$PSTMSRR");
+  //Reset the device so that the changes could take plaace
+  MicroNMEA::sendSentence(gps, "$PSTMSRR");
 
-   delay(4000);
+  delay(4000);
 
-   //clear serial buffer
-   while (gps.available())
-      gps.read();
+  //clear serial buffer
+  while (gps.available())
+    gps.read();
 
-   pinMode(6, INPUT);
-   attachInterrupt(digitalPinToInterrupt(6), ppsHandler, RISING);
+  pinMode(6, INPUT);
+  attachInterrupt(digitalPinToInterrupt(6), ppsHandler, RISING);
 }
+
 
 void loop(void)
 {
-   //If a message is recieved print all the informations
-   if (ppsTriggered)
-   {
-      ppsTriggered = false;
-      ledState = !ledState;
-      digitalWrite(LED_BUILTIN, ledState);
+  //If a message is recieved print all the informations
+  if (ppsTriggered) {
+    ppsTriggered = false;
+    ledState = !ledState;
+    digitalWrite(LED_BUILTIN, ledState);
 
-      // Output GPS information from previous second
-      console.print("Valid fix: ");
-      console.println(nmea.isValid() ? "yes" : "no");
+    // Output GPS information from previous second
+    console.print("Valid fix: ");
+    console.println(nmea.isValid() ? "yes" : "no");
 
-      console.print("Nav. system: ");
-      if (nmea.getNavSystem())
-         console.println(nmea.getNavSystem());
-      else
-         console.println("none");
+    console.print("Nav. system: ");
+    if (nmea.getNavSystem())
+      console.println(nmea.getNavSystem());
+    else
+      console.println("none");
 
-      console.print("Num. satellites: ");
-      console.println(nmea.getNumSatellites());
+    console.print("Num. satellites: ");
+    console.println(nmea.getNumSatellites());
 
-      console.print("HDOP: ");
-      console.println(nmea.getHDOP()/10., 1);
+    console.print("HDOP: ");
+    console.println(nmea.getHDOP() / 10., 1);
 
-      console.print("Date/time: ");
-      console.print(nmea.getYear());
-      console.print('-');
-      console.print(int(nmea.getMonth()));
-      console.print('-');
-      console.print(int(nmea.getDay()));
-      console.print('T');
-      console.print(int(nmea.getHour()));
-      console.print(':');
-      console.print(int(nmea.getMinute()));
-      console.print(':');
-      console.println(int(nmea.getSecond()));
+    console.print("Date/time: ");
+    console.print(nmea.getYear());
+    console.print('-');
+    console.print(int(nmea.getMonth()));
+    console.print('-');
+    console.print(int(nmea.getDay()));
+    console.print('T');
+    console.print(int(nmea.getHour()));
+    console.print(':');
+    console.print(int(nmea.getMinute()));
+    console.print(':');
+    console.println(int(nmea.getSecond()));
 
-      long latitude_mdeg = nmea.getLatitude();
-      long longitude_mdeg = nmea.getLongitude();
-      console.print("Latitude (deg): ");
-      console.println(latitude_mdeg / 1000000., 6);
+    long latitude_mdeg = nmea.getLatitude();
+    long longitude_mdeg = nmea.getLongitude();
+    console.print("Latitude (deg): ");
+    console.println(latitude_mdeg / 1000000., 6);
 
-      console.print("Longitude (deg): ");
-      console.println(longitude_mdeg / 1000000., 6);
+    console.print("Longitude (deg): ");
+    console.println(longitude_mdeg / 1000000., 6);
 
-      long alt;
-      console.print("Altitude (m): ");
-      if (nmea.getAltitude(alt))
-         console.println(alt / 1000., 3);
-      else
-         console.println("not available");
+    long alt;
+    console.print("Altitude (m): ");
+    if (nmea.getAltitude(alt))
+      console.println(alt / 1000., 3);
+    else
+      console.println("not available");
 
-      console.print("Speed: ");
-      console.println(nmea.getSpeed() / 1000., 3);
-      console.print("Course: ");
-      console.println(nmea.getCourse() / 1000., 3);
+    console.print("Speed: ");
+    console.println(nmea.getSpeed() / 1000., 3);
+    console.print("Course: ");
+    console.println(nmea.getCourse() / 1000., 3);
 
-      console.println("-----------------------");
-      nmea.clear();
-   }
+    console.println("-----------------------");
+    nmea.clear();
+  }
 
-   //While the message isn't complete
-   while (!ppsTriggered && gps.available())
-   {
-      //Fetch the character one by one
-      char c = gps.read();
-      console.print(c);
-      //Pass the character to the library
-      nmea.process(c);
-   }
+  //While the message isn't complete
+  while (!ppsTriggered && gps.available()) {
+    //Fetch the character one by one
+    char c = gps.read();
+    console.print(c);
+    //Pass the character to the library
+    nmea.process(c);
+  }
 
 }
