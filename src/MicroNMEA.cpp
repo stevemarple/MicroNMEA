@@ -59,7 +59,8 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
 {
   int8_t neg = 1;
   long r = 0;
-  if (resultValid) *resultValid = false;
+  if (resultValid)
+    *resultValid = false;
   while (isspace(*s))
     ++s;
   if (*s == '-') {
@@ -71,7 +72,8 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
 
   while (isdigit(*s)) {
     r = 10 * r + *s++ - '0';
-    if (resultValid) *resultValid = true;
+    if (resultValid)
+      *resultValid = true;
   }
   r *= exp10(log10Multiplier);
 
