@@ -2,8 +2,34 @@ MicroNMEA
 =========
 
 MicroNMEA is a compact Arduino library to parse a subset of NMEA
-sentences, which can originate from either GPS or GNSS receivers. Only
-two types of messages are parsed, ``$GPGGA`` (and its GNSS
+sentences, which can originate from either GPS or GNSS receivers.
+This fork extends the original library by stevemarple with additional features.
+
+Changes from Original
+-------------------
+
+This fork adds the following enhancements:
+
+* Support for GSA sentences to obtain additional fix information:
+  * Fix type (None/2D/3D)
+  * Selection mode (Auto/Manual)
+  * Position/Vertical/Horizontal Dilution of Precision (PDOP/VDOP/HDOP)
+
+* Enhanced GGA sentence processing:
+  * Added geoid height support
+  * Added callback when time is received (onTimeReceived)
+
+* Additional convenience methods:
+  * getSpeedMS() to get speed in meters per second
+  * getFix() to get the fix type (None/2D/3D)
+  * getAutofix() to get fix selection mode (Auto/Manual)
+  * getVDOP() and getPDOP() for additional dilution of precision values
+  * getGeoidHeight() to get height above WGS84 geoid
+
+Original Description
+------------------
+
+MicroNMEA parses NMEA sentences, specifically ``$GPGGA`` (and its GNSS
 versions ``$GNGGA``, ``$GLGGA``, and ``$GAGGA``) and ``$GPRMC`` (and
 its GNSS versions ``$GNRMC``, ``$GLRMC``, and ``$GARMC``). From these
 two NMEA sentences MicroNMEA can output date, time, latitude,
@@ -20,8 +46,8 @@ as well as the correct ``<CR><LF>`` terminators.
 License
 -------
 
-The MicroNMEA library is released under the GNU Lesser General Public License, version 2.1. 
-http://www.gnu.org/licenses/lgpl-2.1.html
+The MicroNMEA library is released under the GNU Lesser General Public License, version 2.1.
+<http://www.gnu.org/licenses/lgpl-2.1.html>
 
 Initialization and basic usage
 ------------------------------
@@ -46,7 +72,8 @@ Output data from the GPS/GNSS device must be passed to the library for processin
 In the code fragment above ``gps`` is the output stream of the GPS/GNSS device.
 
 Retrieving information from MicroNMEA
--------------------------------------
+------------------------------------
+
 Location, date, time and various status information can be requested using the appropriate member functions which are described below. To obtain all of the information listed below MicroNMEA must process both ``GxGGA`` and ``GxRMC`` sentences::
 
     char getNavSystem() const
@@ -70,7 +97,7 @@ Returns a single character indicating the navigation system in use:
     uint8_t getHDOP(void) const
 
 Horizontal dilution of precision in tenths (i.e., divide by 10 to get true HDOP). ::
- 
+
     bool isValid(void) const
 
 Validity of latest fix. ::
@@ -113,8 +140,33 @@ Speed over ground, in thousandths of a knot. ::
 
 Clear all stored values. ``isValid()`` will return false. Year, month and day will all be zero. Hour, minute and second time will be set to 99. Speed, course and altitude will be set to ``LONG_MIN``; the altitude validity flag will be false. Latitude and longitude will be set to 999 degrees.
 
+Additional Methods in Fork
+-------------------------
+
+::
+
+    fixType_t getFix(void) const
+
+Returns the fix type (None/2D/3D). ::
+
+    char getAutofix(void) const
+
+Returns fix selection mode (Auto/Manual). ::
+
+    long getSpeedMS(void) const
+
+Speed over ground in thousandths of a meter per second. ::
+
+    uint8_t getPDOP(void) const
+
+Position dilution of precision in tenths. ::
+
+    uint8_t getVDOP(void) const
+
+Vertical dilution of precision in tenths.
+
 Callback and associated functions
----------------------------------
+--------------------------------
 
 ::
 
@@ -124,8 +176,12 @@ Callback and associated functions
 
     void setUnknownSentenceHandler(void (*handler)(MicroNMEA& nmea))
 
-``setUnknownSentenceHandler()`` enables MicroNMEA to call a function when a valid but unknown NMEA command is 
+``setUnknownSentenceHandler()`` enables MicroNMEA to call a function when a valid but unknown NMEA command is
 received. The callback function should accept a single parameter (a ``MicroNMEA`` object passed by reference) and return ``void``. ::
+
+    void onTimeReceived(void (*handler)(MicroNMEA& nmea))
+
+Register a callback function to be called when valid time information is received. ::
 
     const char* getSentence(void) const
 
@@ -139,17 +195,16 @@ Return the talker ID from the last processed NMEA sentence. The meaning is the s
     
 Return the message ID from the last processed NMEA sentence, e.g, ``RMC``, ``GGA``. Useful when using callback functions.
 
-
 Contributors
 ------------
 
-- Steve Marple
-- Christopher Liebman
-- per1234
-- Noah-Jonathan Rosa
-- Philipp Tölke
+* Steve Marple
+* Christopher Liebman
+* per1234
+* Noah-Jonathan Rosa
+* Philipp Tölke
 
 Documentation
 -------------
 
-For documentation please see Read The Docs, https://micronmea.readthedocs.io/en/latest/.
+For documentation please see Read The Docs, <https://micronmea.readthedocs.io/en/latest/>.
