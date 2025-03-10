@@ -96,9 +96,11 @@ void loop(void)
     ledState = !ledState;
     digitalWrite(LED_BUILTIN, ledState);
 
-    // Output GPS information from previous second
-    console.print("Valid fix: ");
-    console.println(nmea.isValid() ? "yes" : "no");
+		// Output GPS information from previous second
+    console.print ("Valid fix: ");
+    console.print (nmea.isValid () ? "yes " : "no ");
+    console.print (nmea.getFix () == nmea.FIX_NONE ? "No Fix" : nmea.getFix () == nmea.FIX_2D ? "2D" : "3D");
+    console.println (nmea.getAutofix () == 'A' ? " Auto" : " Manual");
 
     console.print("Nav. system: ");
     if (nmea.getNavSystem())

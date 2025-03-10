@@ -251,7 +251,9 @@ bool MicroNMEA::process(char c)
       if (data != nullptr && strcmp(&_messageID[0], "GGA") == 0)
         return processGGA(data);
       else if (data != nullptr && strcmp(&_messageID[0], "RMC") == 0)
-        return processRMC(data);
+        return processRMC (data);
+      else if (strcmp (&_messageID[0], "GSA") == 0)
+        return processGSA (data);
       else if (_unknownSentenceHandler)
         (*_unknownSentenceHandler)(*this);
     }
@@ -294,6 +296,38 @@ const char* MicroNMEA::parseDate(const char* s)
   return skipField(s + 6);
 }
 
+bool MicroNMEA::processGSA (const char* s) {
+	_autofix = *s;
+	s=s+2; // Skip fix and comma
+    long fixType = parseFloat (s, 0, &s);
+    _isValid = (fixType > 1);
+
+    switch(fixType) {
+    case 1:
+        _fix = FIX_NONE;
+        break;
+    case 2:
+        _fix = FIX_2D;
+        break;
+    case 3:
+        _fix = FIX_3D;
+        break;
+    default:
+        _fix = FIX_NONE;
+        break;
+    }
+
+    // Skip 12 satellite ID fields     
+    for (int i = 0; i < 12; i++) {
+		// Skip 12 satellite ID fields
+		s = skipField (s);
+	}
+	_pdop = parseFloat (s, 1, &s);
+	_hdop = parseFloat (s, 1, &s);
+	_vdop = parseFloat (s, 1, &s);
+
+	return true;
+}
 
 bool MicroNMEA::processGGA(const char *s)
 {
@@ -327,8 +361,13 @@ bool MicroNMEA::processGGA(const char *s)
     s += 2; // Skip E/W and comma
   }
   _isValid = (*s >= '1' && *s <= '5');
+  // Notify time has been obtained
+  if (_timeHandler && _isValid) {
+      (*_timeHandler)(*this);
+  }
+
   s += 2; // Skip position fix flag and comma
-  long tmp = parseFloat(s, 0, &s);
+  long tmp = parseFloat (s, 0, &s);
   _numSat = (tmp > 255 ? 255 : (tmp < 0 ? 0 : tmp));
   if (s == nullptr)
     return false;

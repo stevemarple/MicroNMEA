@@ -20,20 +20,28 @@
  * Values returned are integers, floating-point maths is not used.
  */
 class MicroNMEA {
-  public:
+public:
 
-    static const char* skipField(const char* s);
-    static unsigned int parseUnsignedInt(const char* s, uint8_t len);
-    static long parseFloat(const char* s, uint8_t log10Multiplier,
-                           const char** eptr = nullptr, bool *resultValid = nullptr);
-    static long parseDegreeMinute(const char* s, uint8_t degWidth,
-                                  const char** eptr = nullptr);
-    static const char* parseToComma(const char* s, char *result = nullptr,
-                                    int len = 0);
-    static const char* parseField(const char* s, char *result = nullptr,
-                                  int len = 0);
-    static const char* generateChecksum(const char* s, char* checksum);
-    static bool testChecksum(const char* s);
+    enum fixType_t {
+        FIX_NONE = 1,
+        FIX_2D = 2,
+        FIX_3D = 3
+    };
+
+    typedef void (*onTimeReceived_t)(MicroNMEA& nmea);
+
+    static const char* skipField (const char* s);
+    static unsigned int parseUnsignedInt (const char* s, uint8_t len);
+    static long parseFloat (const char* s, uint8_t log10Multiplier,
+                            const char** eptr = nullptr, bool* resultValid = nullptr);
+    static long parseDegreeMinute (const char* s, uint8_t degWidth,
+                                   const char** eptr = nullptr);
+    static const char* parseToComma (const char* s, char* result = nullptr,
+                                     int len = 0);
+    static const char* parseField (const char* s, char* result = nullptr,
+                                   int len = 0);
+    static const char* generateChecksum (const char* s, char* checksum);
+    static bool testChecksum (const char* s);
 
     /**
      * @brief Send a NMEA sentence to the GNSS receiver.
@@ -44,19 +52,19 @@ class MicroNMEA {
      * and `\r\n` terminators will be appended automatically.
      * @return The GNSS stream
      */
-    static Stream& sendSentence(Stream &s, const char* sentence);
+    static Stream& sendSentence (Stream& s, const char* sentence);
 
     /**
      * @brief Default constructor
      * @details User **must** call setrBuffer() before use
      */
-    MicroNMEA(void);
+    MicroNMEA (void);
 
 
     /**
      * @brief Construct object and pass in the buffer allocated for MicroNMEA to use
      */
-    MicroNMEA(void* buffer, uint8_t len);
+    MicroNMEA (void* buffer, uint8_t len);
 
     /**
      * @brief Set the buffer object
@@ -64,7 +72,7 @@ class MicroNMEA {
      * @param buf Address of the buffer
      * @param len Number of bytes allocated
      */
-    void setBuffer(void* buf, uint8_t len);
+    void setBuffer (void* buf, uint8_t len);
 
     // Clear all fix information. isValid() will return false, Year,
     // month and day will all be zero. Hour, minute and second time will
@@ -79,15 +87,15 @@ class MicroNMEA {
      * `LONG_MIN`; the altitude validity flag will be false. Latitude and
      * longitude will be set to 999 degrees.
      */
-    void clear(void);
+    void clear (void);
 
     /**
      * @brief Get the navigation system in use
      * @details `N` = GNSS, `P` = GPS, `L` = GLONASS, `A` = Galileo, `\0` = none
      * @return char
      */
-    char getNavSystem(void) const {
-      return _navSystem;
+    char getNavSystem (void) const {
+        return _navSystem;
     }
 
     /**
@@ -95,8 +103,8 @@ class MicroNMEA {
      *
      * @return uint8_t
      */
-    uint8_t getNumSatellites(void) const {
-      return _numSat;
+    uint8_t getNumSatellites (void) const {
+        return _numSat;
     }
 
     /**
@@ -104,8 +112,8 @@ class MicroNMEA {
      * @details A HDOP value of 1.1 is returned as `11`
      * @return uint8_t
      */
-    uint8_t getHDOP(void) const {
-      return _hdop;
+    uint8_t getHDOP (void) const {
+        return _hdop;
     }
 
     /**
@@ -114,8 +122,8 @@ class MicroNMEA {
      * @return true Valid
      * @return false Not valid
      */
-    bool isValid(void) const {
-      return _isValid;
+    bool isValid (void) const {
+        return _isValid;
     }
 
     /**
@@ -123,8 +131,8 @@ class MicroNMEA {
      * @details North is positive.
      * @return long
      */
-    long getLatitude(void) const {
-      return _latitude;
+    long getLatitude (void) const {
+        return _latitude;
     }
 
     /**
@@ -132,8 +140,8 @@ class MicroNMEA {
      * @details East is positive.
      * @return long
      */
-    long getLongitude(void) const {
-      return _longitude;
+    long getLongitude (void) const {
+        return _longitude;
     }
 
     // Altitude in millimetres.
@@ -144,33 +152,59 @@ class MicroNMEA {
      * @return true Altitude is valid
      * @return false Altitude not valid
      */
-    bool getAltitude(long &alt) const {
-      if (_altitudeValid)
-        alt = _altitude;
-      return _altitudeValid;
+    bool getAltitude (long& alt) const {
+        if (_altitudeValid)
+            alt = _altitude;
+        return _altitudeValid;
     }
 
     /**
-	 * @brief Get the height above WGS84 Geoid in millimetres.
-	 *
-	 * @return uint16_t year
-	 * @param alt Reference to long value where height is to be stored
-	 * @return true Altitude is valid
-	 * @return false Altitude not valid
-	 */
-	bool getGeoidHeight(long &alt) const {
-		if (_geoidHeightValid)
-			alt = _geoidHeight;
-		return _geoidHeightValid;
-	}
+     * @brief Get the height above WGS84 Geoid in millimetres.
+     *
+     * @return uint16_t year
+     * @param alt Reference to long value where height is to be stored
+     * @return true Altitude is valid
+     * @return false Altitude not valid
+     */
+    bool getGeoidHeight (long& alt) const {
+        if (_geoidHeightValid)
+            alt = _geoidHeight;
+        return _geoidHeightValid;
+    }
 
-	/**
+    /**
+     * @brief Get the fix selection
+     *
+     * @return char (A = Auto, M = Manual)
+     */
+    char getAutofix (void) const {
+        return _autofix;
+    }
+
+    /**
+     * @brief Get the fix type
+     *
+     * @return uint8_t (1 = No fix, 2 = 2D, 3 = 3D)
+     */
+    fixType_t getFix (void) const {
+        return _fix;
+    }
+
+    /**
+     * @brief Get the position dilution of precision, in tenths
+     *
+     * @return uint8_t
+     */
+    uint8_t getPDOP (void) const {
+        return _pdop;
+    }
+    /**
      * @brief Get the year
      *
      * @return uint16_t year
      */
-    uint16_t getYear(void) const {
-      return _year;
+    uint16_t getYear (void) const {
+        return _year;
     }
 
     /**
@@ -178,8 +212,13 @@ class MicroNMEA {
      *
      * @return uint8_t year
      */
-    uint8_t getMonth(void) const {
-      return _month;
+    uint8_t getMonth (void) const {
+        return _month;
+    }
+
+    // Vertical dilution of precision, in tenths
+    uint8_t getVDOP (void) const {
+        return _vdop;
     }
 
     /**
@@ -187,8 +226,8 @@ class MicroNMEA {
      *
      * @return uint8_t month
      */
-    uint8_t getDay(void) const {
-      return _day;
+    uint8_t getDay (void) const {
+        return _day;
     }
 
     /**
@@ -196,8 +235,8 @@ class MicroNMEA {
      *
      * @return uint8_t hour
      */
-    uint8_t getHour(void) const {
-      return _hour;
+    uint8_t getHour (void) const {
+        return _hour;
     }
 
     /**
@@ -205,8 +244,8 @@ class MicroNMEA {
      *
      * @return uint8_t minute
      */
-    uint8_t getMinute(void) const {
-      return _minute;
+    uint8_t getMinute (void) const {
+        return _minute;
     }
 
     /**
@@ -214,8 +253,8 @@ class MicroNMEA {
      *
      * @return uint8_t second
      */
-    uint8_t getSecond(void) const {
-      return _second;
+    uint8_t getSecond (void) const {
+        return _second;
     }
 
     /**
@@ -223,25 +262,33 @@ class MicroNMEA {
      *
      * @return uint8_t hundredths
      */
-    uint8_t getHundredths(void) const {
-      return _hundredths;
+    uint8_t getHundredths (void) const {
+        return _hundredths;
     }
 
     /**
-     * @brief Get the speed
+     * @brief Get the speed in thousands of knots
      *
-     * @return uint8_t speed
+     * @return uint8_t speed in thousands of knots
+    */
+    long getSpeed (void) const {
+        return _speed;
+    }
+
+    /**
+     * @brief Get the speed in thousands of meters per second
+     * @return Speed in thousandths of a meter per second
      */
-    long getSpeed(void) const {
-      return _speed;
+    long getSpeedMS (void) const {
+        return (_speed * 514444L) / 1000000L; // Convert from thousands of knots to thousands of m/s
     }
 
     /**
      * @brief Get the direction of travel
      * @return Direction in thousandths of a degree, clockwise from North
      */
-    long getCourse(void) const {
-      return _course;
+    long getCourse (void) const {
+        return _course;
     }
 
     /**
@@ -251,15 +298,15 @@ class MicroNMEA {
      * @return true A complete non-empty sentence has been processed (may not be valid)
      * @return false End of sentence not detected
      */
-    bool process(char c);
+    bool process (char c);
 
     /**
      * @brief Register a handler to be called when bad checksums are detected
      *
      * @param handler pointer to handler function
      */
-    void setBadChecksumHandler(void (*handler)(MicroNMEA& nmea)) {
-      _badChecksumHandler = handler;
+    void setBadChecksumHandler (void (*handler)(MicroNMEA& nmea)) {
+        _badChecksumHandler = handler;
     }
 
     /**
@@ -267,8 +314,8 @@ class MicroNMEA {
      *
      * @param handler pointer to handler function
      */
-    void setUnknownSentenceHandler(void (*handler)(MicroNMEA& nmea)) {
-      _unknownSentenceHandler = handler;
+    void setUnknownSentenceHandler (void (*handler)(MicroNMEA& nmea)) {
+        _unknownSentenceHandler = handler;
     }
 
     /**
@@ -276,39 +323,56 @@ class MicroNMEA {
      *
      * @return const char*
      */
-    const char* getSentence(void) const {
-      return _buffer;
+    const char* getSentence (void) const {
+        return _buffer;
     }
 
-    // Talker ID for current MicroNMEA sentence
-    char getTalkerID(void) const {
-      return _talkerID;
+    /**
+     * @brief Get the talker ID for the current MicroNMEA sentence
+     *
+     * @return char
+     */
+    char getTalkerID (void) const {
+        return _talkerID;
     }
 
-    // Message ID for current MicroNMEA sentence
-    const char* getMessageID(void) const {
-      return (const char*)_messageID;
+    /**
+     * @brief Get the message ID for the current MicroNMEA sentence
+     *
+     * @return const char*
+     */
+    const char* getMessageID (void) const {
+        return (const char*)_messageID;
     }
 
-
-  protected:
-    static inline bool isEndOfFields(char c) {
-      return c == '*' || c == '\0' || c == '\r' || c == '\n';
+    /**
+     * @brief Register a handler to be called when time is obtained
+     *
+     * @param handler pointer to handler function
+     */
+    void onTimeReceived (void (*handler)(MicroNMEA& nmea)) {
+        _timeHandler = handler;
     }
 
-    const char* parseTime(const char* s);
-    const char* parseDate(const char* s);
+protected:
+    static inline bool isEndOfFields (char c) {
+        return c == '*' || c == '\0' || c == '\r' || c == '\n';
+    }
 
-    bool processGGA(const char *s);
-    bool processRMC(const char* s);
+    const char* parseTime (const char* s);
+    const char* parseDate (const char* s);
 
-  private:
-    // Sentence buffer and associated pointers
-    // static const uint8_t _bufferLen = 83; // 82 + NULL
-    // char _buffer[_bufferLen];
+    bool processGGA (const char* s);
+    bool processGSA (const char* s);
+    bool processRMC (const char* s);
+
+private:
+  // Sentence buffer and associated pointers
+  // static const uint8_t _bufferLen = 83; // 82 + NULL
+  // char _buffer[_bufferLen];
     uint8_t _bufferLen;
     char* _buffer;
-    char *_ptr;
+    char* _ptr;
 
     // Information from current MicroNMEA sentence
     char _talkerID;
@@ -320,16 +384,19 @@ class MicroNMEA {
     long _latitude, _longitude; // In millionths of a degree
     long _altitude; // In millimetres
     bool _altitudeValid;
-	long _geoidHeight; // In millimetres
-	bool _geoidHeightValid;
+    long _geoidHeight; // In millimetres
+    bool _geoidHeightValid;
     long _speed, _course;
+    char _autofix;
+    fixType_t _fix;
     uint16_t _year;
     uint8_t _month, _day, _hour, _minute, _second, _hundredths;
     uint8_t _numSat;
-    uint8_t _hdop;
+    uint8_t _hdop, _vdop, _pdop;
 
-    void (*_badChecksumHandler)(MicroNMEA &nmea);
-    void (*_unknownSentenceHandler)(MicroNMEA &nmea);
+    void (*_badChecksumHandler)(MicroNMEA& nmea);
+    void (*_unknownSentenceHandler)(MicroNMEA& nmea);
+    void (*_timeHandler)(MicroNMEA& nmea); // Callback for when time is obtained
 
 };
 
