@@ -118,12 +118,14 @@ const char* MicroNMEA::parseField(const char* s, char *result, int len)
 
   int i = 0;
   while (*s != ',' && !isEndOfFields(*s)) {
-    if (result && i++ < len)
+    if (result && i < len - 1) { // always leave room for the terminator
       *result++ = *s;
+      ++i;
+    }
     ++s;
   }
-  if (result && i < len)
-    *result = '\0'; // Terminate unless too long
+  if (result && len > 0)
+    *result = '\0';
 
   if (*s == ',')
     return ++s; // Location of start of next field
