@@ -1,4 +1,5 @@
 #include <MicroNMEA.h>
+#include <limits.h>
 
 // Allow debugging/regression testing under normal g++ environment.
 #ifdef MICRONMEA_DEBUG
@@ -49,7 +50,7 @@ const char* MicroNMEA::skipField(const char* s)
 unsigned int MicroNMEA::parseUnsignedInt(const char *s, uint8_t len)
 {
   int r = 0;
-  while (len--)
+  while (len-- && isdigit((unsigned char)*s)) // stops at the terminator: never reads past the sentence
     r = 10 * r + *s++ - '0';
   return r;
 }
@@ -70,8 +71,12 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
   else if (*s == '+')
     ++s;
 
-  while (isdigit(*s)) {
-    r = 10 * r + *s++ - '0';
+  // Ignore digits that would overflow (signed overflow is undefined; ten digits are enough on 32-bit)
+  const long limit = (LONG_MAX / exp10(log10Multiplier) - 9) / 10;
+  while (isdigit((unsigned char)*s)) {
+    if (r <= limit)
+      r = 10 * r + *s - '0';
+    ++s;
     if (resultValid)
       *resultValid = true;
   }
@@ -104,6 +109,12 @@ long MicroNMEA::parseDegreeMinute(const char* s, uint8_t degWidth,
       *eptr = skipField(s);
     return 0;
   }
+  for (uint8_t i = 0; i < degWidth; ++i)
+    if (!isdigit((unsigned char)s[i])) { // too short for the degrees: do not step over the terminator
+      if (eptr)
+        *eptr = skipField(s);
+      return 0;
+    }
   long r = parseUnsignedInt(s, degWidth) * 1000000L;
   s += degWidth;
   r += parseFloat(s, 6, eptr) / 60;
@@ -278,11 +289,15 @@ const char* MicroNMEA::parseTime(const char* s)
 {
   if (*s == ',')
     return skipField(s);
+  // hhmmss[.ss]: only use the fixed offsets once the characters are known to be there
+  for (uint8_t i = 0; i < 6; ++i)
+    if (!isdigit((unsigned char)s[i]))
+      return skipField(s);
   _hour = parseUnsignedInt(s, 2);
   _minute = parseUnsignedInt(s + 2, 2);
   _second = parseUnsignedInt(s + 4, 2);
-  _hundredths = parseUnsignedInt(s + 7, 2);
-  return skipField(s + 9);
+  _hundredths = (s[6] == '.') ? parseUnsignedInt(s + 7, 2) : 0;
+  return skipField(s + 6);
 }
 
 
@@ -290,6 +305,10 @@ const char* MicroNMEA::parseDate(const char* s)
 {
   if (*s == ',')
     return skipField(s);
+  // ddmmyy
+  for (uint8_t i = 0; i < 6; ++i)
+    if (!isdigit((unsigned char)s[i]))
+      return skipField(s);
   _day = parseUnsignedInt(s, 2);
   _month = parseUnsignedInt(s + 2, 2);
   _year = parseUnsignedInt(s + 4, 2) + 2000;
@@ -316,7 +335,9 @@ bool MicroNMEA::processGGA(const char *s)
   else {
     if (*s == 'S')
       _latitude *= -1;
-    s += 2; // Skip N/S and comma
+    s = skipField(s); // Skip N/S and comma
+    if (s == nullptr)
+      return false;
   }
   _longitude = parseDegreeMinute(s, 3, &s);
   if (s == nullptr)
@@ -326,10 +347,14 @@ bool MicroNMEA::processGGA(const char *s)
   else {
     if (*s == 'W')
       _longitude *= -1;
-    s += 2; // Skip E/W and comma
+    s = skipField(s); // Skip E/W and comma
+    if (s == nullptr)
+      return false;
   }
   _isValid = (*s >= '1' && *s <= '5');
-  s += 2; // Skip position fix flag and comma
+  s = skipField(s); // Skip position fix flag and comma
+  if (s == nullptr)
+    return false;
   long tmp = parseFloat(s, 0, &s);
   _numSat = (tmp > 255 ? 255 : (tmp < 0 ? 0 : tmp));
   if (s == nullptr)
@@ -343,7 +368,9 @@ bool MicroNMEA::processGGA(const char *s)
   if (s == nullptr)
     return false;
   if (resultValid) _altitudeValid = true;
-	s += 2; // Skip M and comma
+	s = skipField(s); // Skip M and comma
+	if (s == nullptr)
+		return false;
 	_geoidHeight = parseFloat(s, 3, &s, &resultValid);
 	if (s == nullptr)
 		return false;
@@ -364,7 +391,9 @@ bool MicroNMEA::processRMC(const char* s)
   if (s == nullptr)
     return false;
   _isValid = (*s == 'A');
-  s += 2; // Skip validity and comma
+  s = skipField(s); // Skip validity and comma
+  if (s == nullptr)
+    return false;
   _latitude = parseDegreeMinute(s, 2, &s);
   if (s == nullptr)
     return false;
@@ -373,7 +402,9 @@ bool MicroNMEA::processRMC(const char* s)
   else {
     if (*s == 'S')
       _latitude *= -1;
-    s += 2; // Skip N/S and comma
+    s = skipField(s); // Skip N/S and comma
+    if (s == nullptr)
+      return false;
   }
   _longitude = parseDegreeMinute(s, 3, &s);
   if (s == nullptr)
@@ -383,7 +414,9 @@ bool MicroNMEA::processRMC(const char* s)
   else {
     if (*s == 'W')
       _longitude *= -1;
-    s += 2; // Skip E/W and comma
+    s = skipField(s); // Skip E/W and comma
+    if (s == nullptr)
+      return false;
   }
   _speed = parseFloat(s, 3, &s);
   if (s == nullptr)
